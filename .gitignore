@@ -6,3 +6,4 @@ api-venv
 worker-venv
 node_modules
 __pycache__
+.pytest_cache
