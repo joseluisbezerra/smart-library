@@ -1,0 +1,84 @@
+name: smart-library
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: always
+    env_file:
+      - .env
+    command: ["sh", "-c", "redis-server --appendonly yes --requirepass \"$${REDIS_PASSWORD}\""]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_vol:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$${REDIS_PASSWORD}\" ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smart_library_network
+
+  pgvector:
+    image: pgvector/pgvector:pg16
+    container_name: pgvector
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgvector_vol:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smart_library_network
+
+  api:
+    container_name: api
+    build: ./api
+    ports:
+      - "8000:8000"
+    volumes:
+      - file_storage:/shared
+    env_file:
+      - .env
+    depends_on:
+      pgvector:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - smart_library_network
+
+  worker:
+    build: ./worker
+    container_name: worker
+    env_file:
+      - .env
+    volumes:
+      - file_storage:/shared
+    depends_on:
+      pgvector:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - smart_library_network
+
+volumes:
+  pgvector_vol:
+  redis_vol:
+  file_storage:
+
+networks:
+  smart_library_network:
+    driver: bridge

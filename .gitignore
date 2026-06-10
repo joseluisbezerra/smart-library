@@ -1,0 +1,8 @@
+.env
+.tool-versions
+.vscode
+venv
+api-venv
+worker-venv
+node_modules
+__pycache__
