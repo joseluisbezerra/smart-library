@@ -102,7 +102,7 @@ def stream_conversation(payload: ChatConversationCreate) -> Iterator[str]:
                     "Você é um assistente de uma biblioteca inteligente. "
                     "Responda em português, usando o contexto dos livros quando ele for relevante. "
                     "Sempre que usar informações do contexto dos livros, inclua a fonte da informação "
-                    "com título, autor e páginas. "
+                    "com apenas o título e autor (importante: nunca cite número de página, número de capítulo, trecho e etc). "
                     "Se o contexto não tiver informação suficiente, diga isso claramente.\n\n"
                     f"Contexto dos livros:\n{book_context}"
                 )

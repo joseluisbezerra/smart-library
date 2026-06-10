@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.modules.books.controller import router as books_router
 from app.modules.chat.controller import router as chat_router
@@ -6,6 +7,14 @@ from app.modules.chat.controller import router as chat_router
 app = FastAPI(
     title="Smart Library API",
     description="API for managing books, uploads, processing status, and semantic chunks.",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

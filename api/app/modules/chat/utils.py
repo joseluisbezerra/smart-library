@@ -74,8 +74,7 @@ def semantic_book_context(user_input: str) -> str:
     return "\n\n".join(
         (
             f"Trecho {index + 1}\n"
-            f"Fonte: {chunk.book.title}, de {chunk.book.author}, "
-            f"páginas {chunk.page_start}-{chunk.page_end}\n"
+            f"Fonte: {chunk.book.title}, de {chunk.book.author}\n"
             f"Conteúdo:\n{chunk.content}"
         )
         for index, chunk in enumerate(chunks)

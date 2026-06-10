@@ -143,5 +143,9 @@ def update_book(db: Session, book: Book, payload: BookUpdate) -> Book:
 
 
 def delete_book(db: Session, book: Book) -> None:
+    file_location = FILE_STORAGE_PATH / f"{book.id}{book.file_extension}"
+
     db.delete(book)
     db.commit()
+
+    file_location.unlink(missing_ok=True)

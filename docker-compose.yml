@@ -74,6 +74,18 @@ services:
     networks:
       - smart_library_network
 
+  front:
+    build: ./front
+    container_name: front
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - api
+    networks:
+      - smart_library_network
+
 volumes:
   pgvector_vol:
   redis_vol:
